@@ -75,6 +75,9 @@ def main():
         translated = file_translate(args.file, agrs.language1, args.language2)
         print(translated, file = args.outdir)
 
+    if not args.file and not args.string:
+        print("There's nothing to translate. Please input a string or file to translate.")
+
     
 
 # --------------------------------------------------
