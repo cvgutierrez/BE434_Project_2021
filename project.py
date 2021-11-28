@@ -8,6 +8,7 @@ Purpose: Final Project BE 434 Fall 2021
 import argparse
 import os
 from translate import Translator
+import sys
 
 
 # --------------------------------------------------
@@ -39,8 +40,7 @@ def get_args():
                         default=None,
                         nargs='*')
     
-    parser.add_argument('-s',
-                        '--string',
+    parser.add_argument('string',
                         help="Input string to translate",
                         metavar='str',
                         type=str,
@@ -52,7 +52,7 @@ def get_args():
                         help='Output directory',
                         type=str,
                         metavar='DIR',
-                        default='outdir')
+                        default='sys.stdout')
 
     return parser.parse_args()
 
@@ -66,23 +66,36 @@ def main():
     
     if not os.path.isdir(args.outdir):
         os.makedirs(args.outdir)
-        
-    interpreter = Translator(from_lang="{args.language1}", to_lang="{args.language2}")
+
+    if args.string:
+        translated = string_translate(args.string, agrs.language1, args.language2)
+        print(translated, file = args.outdir)
+
+    if args.file:
+        translated = file_translate(args.file, agrs.language1, args.language2)
+        print(translated, file = args.outdir)
+
     
 
 # --------------------------------------------------
-def string_translate(string, languages):
-  original = open(os.path.join(args.outdir, root + '_' + "{args.language1}" + ext), 'wt')
-  translated = open(os.path.join(args.outdir, root + '_' + "{args.language2}" + ext), 'wt')
-  print(string, file=original)
-  print(languages.translate(string), file=translated)
+def string_translate(string, in_lang, out_lang):
+    '''translate strings'''
+
+    interpreter = Translator(from_lang=in_lang, to_lang=out_lang)
+    return translator.translate(string)
+
   
 # --------------------------------------------------
-def file_translate(file, languages):
-  for fh in args.file:
-        root, ext = os.path.splitext(os.path.basename(fh.name))
-        original = open(os.path.join(args.outdir, root + '_' + "{args.language1}" + ext), 'wt')
-        translated = open(os.path.join(args.outdir, root + '_' + "{args.language2}" + ext), 'wt')
+def file_translate(file, in_lang, out_lang):
+    '''translate files'''
+
+    interpreter = Translator(from_lang=in_lang, to_lang=out_lang)
+    lines = []
+    for line in file:
+        new_line = translator.translate(line.rstrip())
+        lines.append(new_line)
+    return "\n".join(lines)
+
   
 # --------------------------------------------------
 if __name__ == '__main__':
