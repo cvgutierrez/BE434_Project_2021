@@ -1,2 +1,4 @@
 translate
 argparse
+os
+sys
